@@ -13,5 +13,5 @@ deploy:
     secure: Ry79JQVjTUby5KxJMv7vTruG0Il2P9UT39AbJt0h6wfdRSCwhNRpsYgPVz4GjdB2ZtaP9P4F5qumayNazkclrhaOvjqNYnpC6/7axJsF1X6fZZXJBomvfEioJyUyogb+6vzi/S+6jTFPfPLfhmdiL96uKsdNpRKt/CZB0Wuy7dU3m81hJwzTRLB/Dm2iXosirFJb1HeqVm9PK/Z6o+A7kl4BBo3eOg4AK4Wax/zGbkM77cPBEw5V/XI/M9OCHqe92QcNDf2sy3Y+nmm5wmqQNMm0NSACWVEMeqQM9BOoeCFOs5N96FizAt2DraPVQXXwBa7GVh+wLy0sLjGhtoXxtmKIgfj2LkYuB8puH+52eoABM0IVuZomsBvPDlDVUmdyEMxddcgIpA4FH8P2zgU18Sh0B3oIFM9B8oUhmS38mfh9XbwztMx2sAQWfpI1QJbMpvKRz+pYibiW0vpTv+4WdryVLNFGUENCW7247pz5ukzSsbV82Gr8VHIcTOqNaEN2rSEBpS5NEJxYrZYVhF+usy3gIITQ5qG7qlnj223LQuMSIDgh5TYB7TKT4N8PhLHCqP+HCtVhraF2FjziyifaorwoGqFfCdbTDUN3uFX7O2B/mzNW3hQX1Nx4u7oHjD+QUgVT7PUKUBoXeNRqHBDtw+TEFWUhwOJ6W24ba96Nq9g=
   on:
     tags: true
-    repo: vicyap/vectra_api_client
+    repo: vicyap/vectra-api-client
     python: 2.7
