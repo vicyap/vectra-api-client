@@ -11,8 +11,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-with open('requirements.txt') as requirements_file:
-    requirements = requirements_file.readlines()
+install_requirements = []
 
 setup_requirements = ['pytest-runner', ]
 
@@ -35,7 +34,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     description="Vectra API Client",
-    install_requires=requirements,
+    install_requires=install_requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
