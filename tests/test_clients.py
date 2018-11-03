@@ -46,7 +46,7 @@ def test_supported_endpoints(mocker, attrs, methods, version):
         for attr in attrs:
             endpoint = getattr(endpoint, attr)
         assert getattr(endpoint, method)()
-        requests.request.assert_called_once()
+        assert requests.request.called, 'requests was not called'
         requests.request.reset_mock()
 
 
