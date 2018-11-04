@@ -27,25 +27,114 @@ paths:
         description: The category of the vname attack detected.
         schema:
             type: string
-            enum:
-            - COMMAND AND CONTROL
-            - BOTNET
-            - RECONNAISSANCE
-            - LATERAL MOVEMENT
-            - EXFILTRATION
+            # TODO: enumerate categories. hard to because we alias a lot of things
       - name: page
         in: query
-        description: Page Number.
         schema:
           type: integer
-          format: int32
+      - description: '>= the id provided'
+        in: query
+        name: min_id
+        schema:
+          type: string
+      - description: '<= the id provided'
+        in: query
+        name: max_id
+        schema:
+          type: integer
+      - description: 'filter by state: active, inactive, ignored, ignored4all'
+        in: query
+        name: state
+        schema:
+          type: string
+          enum:
+          - active
+          - inactive
+      - description: filter by the detection description
+        in: query
+        name: description
+        schema:
+          type: string
+      - description: filter by the detection type (verbose name)
+        in: query
+        name: detection_type
+        schema:
+          type: string
+      - description: filter by the detection type (verbose name)
+        in: query
+        name: detection
+        schema:
+          type: string
+      - description: filter by the detection category
+        in: query
+        name: detection_category
+        schema:
+          type: string
+      - description: filter by the detection category
+        in: query
+        name: category
+        schema:
+          type: string
+      - description: filter by source (ip address)
+        in: query
+        name: src_ip
+        schema:
+          type: string
+      - description: filter by threat score
+        in: query
+        name: threat
+        schema:
+          type: integer
+      - description: 'filter by threat score >= the score provided'
+        in: query
+        name: threat_gte
+        schema:
+          type: integer
+      - description: filter by certainty score
+        in: query
+        name: certainty
+        schema:
+          type: integer
+      - description: 'filter by certainty score >= the score provided'
+        in: query
+        name: certainty_gte
+        schema:
+          type: integer
+      - description: filter by last_timestamp
+        in: query
+        name: last_timestamp
+        schema:
+          type: dateTime
+      - description: filter by id of the host object a detection is attributed to
+        in: query
+        name: host_id
+        schema:
+          type: string
+      - name: tags
+        description: User defined tags added to the detection.
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+      - description: 'filter by detections that are targeting a key asset: True, False'
+        in: query
+        name: is_targeting_key_asset
+        schema:
+          type: boolean
+      - description: 'filter by note_modified_timestamp >= the timestamp provided: 2017-12-31T16:55:50Z'
+        in: query
+        name: note_modified_timestamp_gte
+        schema:
+          type: dateTime
+
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Detections'
+                $ref: '#/components/responses/DetectionsResponse200'
         default:
           description: unexpected error
           content:
@@ -100,6 +189,68 @@ components:
         summary:
           type: object
           description: Summary of detection.
+        detection_category:
+          type: string
+        dst_port:
+          type: integer
+        dst_geo:
+          type: string
+        src_ip:
+          type: string
+        state:
+          type: string
+        threat:
+          type: integer
+        certainty:
+          type: integer
+        first_timestamp:
+          type: dateTime
+        last_timestamp:
+          type: dateTime
+        detection_detail_set:
+          type: object
+        description:
+          type: string
+        destination:
+          type: string
+        count:
+          type: integer
+        proto:
+          type: string
+        total_bytes_sent:
+          type: integer
+        total_bytes_rcvd:
+          type: integer
+        url:
+          type: string
+        sensor_name:
+          type: string
+        host:
+          type: string
+        summary:
+          type: object
+        grouped_details:
+          type: object
+        tags:
+          description: User defined tags added to the detection.
+          type: array
+          items:
+            type: string
+        is_targeting_key_asset:
+          type: boolean
+        campaign_summaries:
+          type: object
+        note:
+          type: string
+        note_modified_by:
+          type: string
+        note_modified_timestamp:
+          type: dateTime
+        assigned_to:
+          type: string
+        assigned_date:
+          type: dateTime
+
   responses:
     DetectionsResponse200:
       description: OK
