@@ -70,11 +70,6 @@ paths:
         name: detection_category
         schema:
           type: string
-      - description: filter by the detection category
-        in: query
-        name: category
-        schema:
-          type: string
       - description: filter by source (ip address)
         in: query
         name: src_ip
@@ -104,7 +99,7 @@ paths:
         in: query
         name: last_timestamp
         schema:
-          type: dateTime
+          type: string
       - description: filter by id of the host object a detection is attributed to
         in: query
         name: host_id
@@ -126,27 +121,184 @@ paths:
         in: query
         name: note_modified_timestamp_gte
         schema:
-          type: dateTime
-
+          type: string
       responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/responses/DetectionsResponse200'
+        '200':
+          $ref: '#/components/responses/Detections200'
         default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/Default'
+  /search/hosts:
+    get:
+      parameters:
+      - $ref: '#/components/parameters/page_size'
+      - $ref: '#/components/parameters/query_string'
+      responses:
+        '200':
+          $ref: '#/components/responses/SearchHosts200'
+        default:
+          $ref: '#/components/responses/Default'
+  /search/detections:
+    get:
+      parameters:
+      - $ref: '#/components/parameters/page_size'
+      - $ref: '#/components/parameters/query_string'
+      responses:
+        '200':
+          $ref: '#/components/responses/SearchDetections200'
+        default:
+          $ref: '#/components/responses/Default'
+  /proxies:
+    get:
+      responses:
+        '200':
+          $ref: '#/components/responses/Proxies200'
+        default:
+          $ref: '#/components/responses/Default'
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProxiesBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '201':
+          $ref: '#/components/responses/201'
+        default:
+          $ref: '#/components/responses/Default'
+  /proxies/{id}:
+    get:
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          $ref: '#/components/responses/Proxy200'
+        default:
+          $ref: '#/components/responses/Default'
+    patch:
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProxiesBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '204':
+          $ref: '#/components/responses/204'
+        default:
+         $ref: '#/components/responses/Default'
+  /threatFeeds:
+    get:
+      responses:
+        '200':
+          $ref: '#/components/responses/ThreatFeeds200'
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThreatFeedsBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/200'
+        '201':
+          $ref: '#/components/responses/201'
+        default:
+         $ref: '#/components/responses/Default'
+  /threatFeeds/{id}:
+    get:
+      parameters:
+      - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          $ref: '#/components/responses/ThreatFeed200'
+        default:
+         $ref: '#/components/responses/Default'
 components:
   securitySchemes:
     TokenAuth:
       type: apiKey
       name: Authorization
       in: header
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    page_size:
+      name: page_size
+      in: query
+      schema:
+        type: integer
+    query_string:
+      name: query_string
+      in: query
+      schema:
+        type: string
+  responses:
+    200:
+      description: OK
+    201:
+      description: OK
+    204:
+      description: OK
+    Default:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Detections200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Detections'
+    SearchHosts200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Hosts'
+    SearchDetections200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Detections'
+    Proxies200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Proxies'
+    Proxy200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Proxy'
+    ThreatFeeds200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ThreatFeeds'
+    ThreatFeed200:
+      description: OK
+      content:
+        appliction/json:
+          schema:
+            $ref: '#/components/schemas/ThreatFeed'
   schemas:
     Error:
       required:
@@ -204,9 +356,9 @@ components:
         certainty:
           type: integer
         first_timestamp:
-          type: dateTime
+          type: string
         last_timestamp:
-          type: dateTime
+          type: string
         detection_detail_set:
           type: object
         description:
@@ -227,8 +379,6 @@ components:
           type: string
         host:
           type: string
-        summary:
-          type: object
         grouped_details:
           type: object
         tags:
@@ -245,16 +395,96 @@ components:
         note_modified_by:
           type: string
         note_modified_timestamp:
-          type: dateTime
+          type: string
         assigned_to:
           type: string
         assigned_date:
-          type: dateTime
-
-  responses:
-    DetectionsResponse200:
-      description: OK
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/Detections"
+          type: string
+    Hosts:
+      type: object
+    Proxies:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: integer
+        proxies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Proxy'
+    ProxiesBody:
+      type: object
+      properties:
+        proxy:
+          type: object
+          properties:
+            address:
+              type: string
+            considerProxy:
+              type: boolean
+    Proxy:
+      type: object
+      properties:
+        source:
+          type: string
+          enum:
+            - user
+            - cognito
+        id:
+          type: string
+        considersProxy:
+          description: Whether to consider the object as a proxy or not
+          type: boolean
+        address:
+          description: The IP address for the proxy object
+          type: string
+    ThreatFeeds:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            count:
+              type: integer
+        threatFeeds:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThreatFeed'
+    ThreatFeed:
+      type: object
+      properties:
+        name:
+          type: string
+        duration:
+          type: integer
+        category:
+          type: string
+          enum:
+          - cnc
+          - lateral
+          - exfil
+        indicatorType:
+          type: string
+          enum:
+          - Anonymization
+          - C2
+          - Exfiltration
+          - Malware
+          - Artifacts
+          - Watchlist
+        certainty:
+          type: string
+          enum:
+          - Low
+          - Medium
+          - High
+        data:
+          type: object
+          nullable: true
+    ThreatFeedsBody:
+      type: object
+      properties:
+        threatFeed:
+          $ref: '#/components/schemas/ThreatFeed'
