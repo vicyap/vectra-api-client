@@ -22,129 +22,26 @@ paths:
     get:
       summary: Detection objects contain all the information related to security events detected on the network.
       parameters:
-        - name: fields
-          in: query
-          description: Filter objects listed
-          schema:
-            type: array
-            items:
-              type: string
-        - name: page
-          in: query
-          description: Page Number.
-          schema:
-            type: integer
-        - name: page_size
-          in: query
-          description: Page size.
-          schema:
-            type: integer
-        - name: ordering
-          in: query
-          description: Orders records by last timestamp, threat score and certainty score.
-          schema:
-            type: string
-            enum:
-              - c_score
-              - -c_score
-              - last_timestamp
-              - -last_timestamp
-              - t_score
-              - -t_score
-        - name: min_id
-          in: query
-          description: '>= the id provided.'
-          schema:
-            type: integer
-        - name: max_id
-          in: query
-          description: '<= the id provided.'
-          schema:
-            type: integer
-        - name: state
-          in: query
-          description: filter by state.
-          schema:
-            type: string
-            enum:
-              - active
-              - inactive
-        - name: category
-          in: query
-          description: filter by the detection category.
-          schema:
-            type: string
-            enum:
-              - botnet
-              - command
-              - exfiltration
-              - lateral
-              - reconnaissance
-        - name: detection_type
-          in: query
-          description: filter by the name of the threat detected.
-          schema:
-            type: string
-        - name: src_ip
-          in: query
-          description: filter by source ip address.
-          schema:
-            type: string
-        - name: threat_score
-          in: query
-          description: filter by threat score.
-          schema:
-            type: integer
-        - name: threat_gte  # double check vs t_score_gte
-          in: query
-          description: 'filter by threat score >= the score provided.'
-          schema:
-            type: integer
-        - name: certainty
-          in: query
-          description: filter by certainty score.
-          schema:
-            type: integer
-        - name: certainty_gte
-          in: query
-          description: 'filter by certainty score >= the score provided.'
-          schema:
-            type: integer
-        - name: last_timestamp
-          in: query
-          description: filter by last timestamp.
-          schema:
-            type: string
-        - name: host_id
-          in: query
-          description: filter by id of the host.
-          schema:
-            type: integer
-        - name: tags
-          in: query
-          description: filter by a tag or a comma-separated list of tags.
-          schema:
-            type: string
-        - name: destination
-          in: query
-          description: filter by destination in the the detection detail set.
-          schema:
-            type: string
-        - name: proto
-          in: query
-          description: filter by the protocol in the detection detail set.
-          schema:
-            type: string
-        - name: is_targeting_key_asset
-          in: query
-          description: filter by is_targeting_key_asset.
-          schema:
-            type: boolean
-        - name: note_modified_timestamp_gte
-          in: query
-          description: 'filter by note_modified_timestamp >= the timestamp provided.'
-          schema:
-            type: string
+        - $ref: '#/components/parameters/c_score'
+        - $ref: '#/components/parameters/c_score_gte'
+        - $ref: '#/components/parameters/category'
+        - $ref: '#/components/parameters/destination'
+        - $ref: '#/components/parameters/detection_type'
+        - $ref: '#/components/parameters/fields'
+        - $ref: '#/components/parameters/host_id'
+        - $ref: '#/components/parameters/is_targeting_key_asset'
+        - $ref: '#/components/parameters/last_timestamp'
+        - $ref: '#/components/parameters/max_id'
+        - $ref: '#/components/parameters/min_id'
+        - $ref: '#/components/parameters/note_modified_timestamp_gte'
+        - $ref: '#/components/parameters/ordering'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/proto'
+        - $ref: '#/components/parameters/src_ip'
+        - $ref: '#/components/parameters/t_score'
+        - $ref: '#/components/parameters/t_score_gte'
+        - $ref: '#/components/parameters/tags'
         # The following query parameters have been deprecated
         - name: type_vname
           in: query
@@ -231,8 +128,6 @@ paths:
           $ref: '#/components/responses/DefaultResponse'
   /detections/{id}:
     get:
-      tags:
-        - detections
       parameters:
         - name: id
           in: path
@@ -244,10 +139,43 @@ paths:
           $ref: '#/components/responses/DetectionResponse200'
         default:
           $ref: '#/components/responses/DefaultResponse'
+  /hosts:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/c_score'
+        - $ref: '#/components/parameters/c_score_gte'
+        - $ref: '#/components/parameters/fields'
+        - $ref: '#/components/parameters/key_asset'
+        - $ref: '#/components/parameters/last_detection_timestamp'
+        - $ref: '#/components/parameters/last_source'
+        - $ref: '#/components/parameters/mac_address'
+        - $ref: '#/components/parameters/max_id'
+        - $ref: '#/components/parameters/min_id'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/note_modified_timestamp_gte'
+        - $ref: '#/components/parameters/ordering'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/page_size'
+        - $ref: '#/components/parameters/state'
+        - $ref: '#/components/parameters/t_score'
+        - $ref: '#/components/parameters/t_score_gte'
+        - $ref: '#/components/parameters/tags'
+      responses:
+        '200':
+          $ref: '#/components/responses/HostsResponse200'
+        default:
+          $ref: '#/components/responses/DefaultResponse'
+  /hosts/{id}:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          $ref: '#/components/responses/HostResponse200'
+        default:
+          $ref: '#/components/responses/DefaultResponse'
   /system/info:
     get:
-      tags:
-        - system
       responses:
         '200':
           $ref: '#/components/responses/SystemInfoResponse200'
@@ -258,6 +186,178 @@ components:
     BasicAuth:
       type: http
       scheme: basic
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    fields:
+      name: fields
+      in: query
+      description: Filter objects listed
+      schema:
+        type: array
+        items:
+          type: string
+    page:
+      name: page
+      in: query
+      description: Page Number.
+      schema:
+        type: integer
+    page_size:
+      name: page_size
+      in: query
+      description: Page size.
+      schema:
+        type: integer
+    ordering:
+      name: ordering
+      in: query
+      description: Orders records by last timestamp, threat score and certainty score.
+      schema:
+        type: string
+        enum:
+          - c_score
+          - -c_score
+          - last_timestamp
+          - -last_timestamp
+          - t_score
+          - -t_score
+    name:
+      name: name
+      in: query
+      description: filter by name.
+      schema:
+        type: string
+    state:
+      name: state
+      in: query
+      description: filter by state.
+      schema:
+        type: string
+        enum:
+          - active
+          - inactive
+    min_id:
+      name: min_id
+      in: query
+      description: '>= the id provided.'
+      schema:
+        type: integer
+    max_id:
+      name: max_id
+      in: query
+      description: '<= the id provided.'
+      schema:
+        type: integer
+    t_score:
+      name: t_score
+      in: query
+      description: filter by threat score.
+      schema:
+        type: integer
+    t_score_gte:
+      name: t_score_gte
+      in: query
+      description: 'filter by threat score >= the score provided.'
+      schema:
+        type: integer
+    c_score:
+      name: c_score
+      in: query
+      description: filter by certainty score.
+      schema:
+        type: integer
+    c_score_gte:
+      name: c_score_gte
+      in: query
+      description: 'filter by certainty score >= the score provided.'
+      schema:
+        type: integer
+    note_modified_timestamp_gte:
+      name: note_modified_timestamp_gte
+      in: query
+      description: 'filter by note_modified_timestamp >= the timestamp provided.'
+      schema:
+        type: string
+    category:
+      name: category
+      in: query
+      description: filter by the detection category.
+      schema:
+        type: string
+        enum:
+          - botnet
+          - command
+          - exfiltration
+          - lateral
+          - reconnaissance
+    detection_type:
+      name: detection_type
+      in: query
+      description: filter by the name of the threat detected.
+      schema:
+        type: string
+    last_source:
+      name: last_source
+      in: query
+      schema:
+        type: string
+    last_detection_timestamp:
+      name: last_detection_timestamp
+      in: query
+      schema:
+        type: string
+    tags:
+      name: tags
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+    key_asset:
+      name: key_asset
+      in: query
+      schema:
+        type: boolean
+    mac_address:
+      name: mac_address
+      in: query
+      schema:
+        type: string
+    src_ip:
+      name: src_ip
+      in: query
+      schema:
+        type: string
+    last_timestamp:
+      name: last_timestamp
+      in: query
+      schema:
+        type: string
+    host_id:
+      name: host_id
+      in: query
+      schema:
+        type: integer
+    destination:
+      name: destination
+      in: query
+      schema:
+        type: string
+    proto:
+      name: proto
+      in: query
+      schema:
+        type: string
+    is_targeting_key_asset:
+      name: is_targeting_key_asset
+      in: query
+      schema:
+        type: boolean
   responses:
     DefaultResponse:
       description: unexpected error
@@ -277,6 +377,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Detection'
+    HostsResponse200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Hosts'
+    HostResponse200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Host'
     SystemInfoResponse200:
       description: OK
       content:
@@ -430,6 +542,83 @@ components:
         url:
           type: string
           description: The URL that links directory to this record.
+    Hosts:
+      type: object
+      properties:
+        count:
+          description: Number of returned objects.
+          type: integer
+        next:
+          description: URL for next page.
+          type: string
+        previous:
+          description: URL for previous page.
+          type: string
+        results:
+          description: The list of detections.
+          type: array
+          items:
+            $ref: '#/components/schemas/Host'
+      required:
+        - count
+        - results
+    Host:
+      type: object
+      properties:
+        c_score:
+          description: The current certainty score correlated to this host.
+          type: integer
+        detection_set:
+          description: List of detections for host.
+          type: array
+          items:
+            type: string
+        host_artifact_set:
+          description: List of host artifacts observed for the host.
+          type: array
+          items:
+            $ref: '#/components/schemas/HostArtifact'
+        id:
+          type: integer
+        key_asset:
+          type: boolean
+        last_detection_timestamp:
+          type: string
+        last_source:
+          type: string
+        name:
+          type: string
+        new_host_pointer:
+          type: string
+          nullable: true
+          deprecated: true
+        note:
+          description: User defined note added to the host
+          type: string
+          nullable: true
+        owner_name:
+          description: Probable owner of the host
+          type: string
+          nullable: true
+        sensor_luid:
+          type: string
+        state:
+          type: string
+          enum:
+            - active
+            - inactive
+        t_score:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+        targets_key_asset:
+          type: boolean
+        url:
+          type: string
+    HostArtifact:
+      type: object
     SystemInfo:
       type: object
       properties:
