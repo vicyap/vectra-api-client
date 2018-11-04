@@ -45,11 +45,8 @@ def v2(host, token, verify=True):
     return api
 
 
-def PrefixUrlSession(prefix=None):
-    if prefix is None:
-        prefix = ""
-    else:
-        prefix = prefix.rstrip('/') + '/'
+def PrefixUrlSession(prefix):
+    prefix = prefix.rstrip('/') + '/'
 
     def new_request(prefix, f, method, url, *args, **kwargs):
         return f(method, prefix + url, *args, **kwargs)
