@@ -13,8 +13,9 @@ install: pip install -U tox-travis
 script:
   - make test-all
 
-before_deploy: make swagger
+before_deploy: make clean swagger
 deploy:
+  skip_cleanup: true
   provider: pypi
   distributions: sdist bdist_wheel
   user: vicyap
