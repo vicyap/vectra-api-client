@@ -1,217 +1,85 @@
 # -*- coding: utf-8 -*-
 
 """Clients module."""
-
-import functools
 import requests
 
-
-def api(*args):
-    def decorator(f):
-        @functools.wraps(f)
-        def inner(self, **kwargs):
-            if self.client.version in args:
-                return f(self, **kwargs)
-            else:
-                raise NotImplementedError('Method unsupport on version {}'.format(self.client.version))
-        return inner
-    return decorator
+from vectra_api_client import detect
+import detect.v1
+import detect.v1.paths
+import detect.v2
+import detect.v2.paths
 
 
-class DetectClient(object):
-    def __init__(self, url=None, token=None, username=None, password=None, verify=True):
-        self.url = url
+class DetectClientV1(object):
+    def __init__(self, url=None, username=None, password=None, verify=True):
+        self.url = url + '/api'
         self.verify = verify
+        self.auth = (username, password)
 
-        if token is None:
-            self.version = 1
-            self.url = self.url + '/api'
-            self.auth = (username, password)
-        elif username is None and password is None:
-            self.version = 2
-            self.url = self.url + '/api/v2'
-            self.headers = {
-                'Authorization': 'Token ' + token.strip()
-            }
-        else:
-            raise RuntimeError(
-                'At least one form of authentication is required. Please provide a token or username and password'
-            )
+        # self.settings = detect.path.v1.SettingsPath(self)
+        # self.rules = detect.path.v1.RulesPath(self)
+        self.detections = detect.path.v1.DetectionsPath(self)  # client.detections.get()
+        # self.hosts = detect.path.v1.HostsPath(self)
 
-        self.settings = DetectClient.Settings(self)
-        self.rules = DetectClient.Rules(self)
-        self.detections = DetectClient.Detections(self)
-        self.hosts = DetectClient.Hosts(self)
-        self.health = DetectClient.Health(self)
-        self.sensors = DetectClient.Sensors(self)
-        self.system = DetectClient.System(self)
-        self.search = DetectClient.Search(self)
-        self.threat_feeds = DetectClient.ThreatFeeds(self)
-        self.proxies = DetectClient.Proxies(self)
-        self.tagging = DetectClient.Tagging(self)
+
+
+        self.health = detect.path.v1.HealthPath(self)
+        # client.health.get()
+        # client.health.subnets.get()
+        # client.health.traffic.get()
+        # client.health.headend(brain_luid).get()
+        # client.health.headend(brain_luid).subnets.get(params={}, raw_response=True)
+
+
+
+        # self.sensors = detect.path.v1.SensorsPath(self)
+        # self.system = detect.path.v1.SystemPath(self)
+        # client.system.info.get()
 
     def request(self, method, path, **kwargs):
         """Allows requests to any endpoint."""
-        new_kwargs = {'verify': self.verify}
-        if self.version == 1:
-            new_kwargs['auth'] = self.auth
-        elif self.version == 2:
-            new_kwargs['headers'] = self.headers
+        new_kwargs = {
+            'verify': self.verify,
+            'auth': self.auth,
+        }
         new_kwargs.update(kwargs)  # override default values with kwargs parameter
-
         return requests.request(method, self.url + path, **new_kwargs)
 
-    class System(object):
-        def __init__(self, client):
-            self.client = client
+    def get_token(self, create=False):
+        """Get the API v2 token.
 
-            self.info = DetectClient.System.Info(self.client)
+        Args:
+            create (bool): create the token if one does not exist.
+        """
+        raise NotImplementedError()
 
-        class Info(object):
-            def __init__(self, client):
-                self.client = client
 
-            @api(1)
-            def get(self):
-                """GET /system/info"""
-                return self.client.request('GET', '/system/info').json()
+class DetectClientV2(object):
+    def __init__(self, url=None, token=None, verify=True):
+        self.url = url + '/api/v2'
+        self.token = token
+        self.verify = verify
+        self.headers = {
+            'Authorization': 'Token ' + token.strip()
+        }
 
-    class Settings(object):
-        def __init__(self, client):
-            self.client = client
+        self.rules = detect.v2.paths.RulesPath(self)
+        self.detections = detect.v2.paths.DetectionsPath(self)
+        self.hosts = detect.v2.paths.HostsPath(self)
+        self.search = detect.v2.paths.SearchPath(self)
+        self.threat_feeds = detect.v2.paths.ThreatFeedsPath(self)
+        self.proxies = detect.v2.paths.ProxiesPath(self)
+        self.tagging = detect.v2.paths.TaggingPath(self)
 
-        @api(1)
-        def get(self):
-            """GET /settings"""
-            return self.client.request('GET', '/settings').json()
+    def request(self, method, path, **kwargs):
+        """Allows requests to any endpoint."""
+        new_kwargs = {
+            'verify': self.verify,
+            'headers': self.headers,
+        }
+        new_kwargs.update(kwargs)  # override default values with kwargs parameter
+        return requests.request(method, self.url + path, **new_kwargs)
 
-    class Rules(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(1, 2)
-        def get(self):
-            """GET /rules"""
-            return self.client.request('GET', '/rules').json()
-
-        @api(2)
-        def post(self):
-            """POST /rules"""
-            return self.client.request('POST', '/rules').json()
-
-        @api(2)
-        def put(self):
-            """PUT /rules"""
-            return self.client.request('PUT', '/rules').json()
-
-        @api(2)
-        def delete(self):
-            """DELETE /rules"""
-            return self.client.request('DELETE', '/rules').json()
-
-        @api(2)
-        def options(self):
-            """OPTIONS /rules"""
-            return self.client.request('OPTIONS', '/rules').json()
-
-    class Detections(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(1, 2)
-        def get(self):
-            """GET /detections"""
-            return self.client.request('GET', '/detections').json()
-
-        @api(2)
-        def patch(self):
-            """PATCH /detections"""
-            return self.client.request('PATCH', '/detections').json()
-
-    class Hosts(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(1, 2)
-        def get(self):
-            """GET /hosts"""
-            return self.client.request('GET', '/hosts').json()
-
-        @api(2)
-        def patch(self):
-            """PATCH /detections"""
-            return self.client.request('PATCH', '/detections').json()
-
-    class Health(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(1)
-        def get(self):
-            """GET /health"""
-            return self.client.request('GET', '/health').json()
-
-    class Sensors(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(1)
-        def get(self):
-            """GET /sensors"""
-            return self.client.request('GET', '/sensors').json()
-
-    class Search(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(2)
-        def get(self):
-            """GET /search"""
-            return self.client.request('GET', '/search').json()
-
-    class ThreatFeeds(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(2)
-        def get(self):
-            """GET /threatFeeds"""
-            return self.client.request('GET', '/threatFeeds').json()
-
-        @api(2)
-        def post(self):
-            """POST /threadFeeds"""
-            return self.client.request('POST', '/threatFeeds').json()
-
-    class Proxies(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(2)
-        def get(self):
-            """GET /proxies"""
-            return self.client.request('GET', '/proxies').json()
-
-        @api(2)
-        def post(self):
-            """POST /proxies"""
-            return self.client.request('POST', '/proxies').json()
-
-        @api(2)
-        def patch(self):
-            """PATCH /proxies"""
-            return self.client.request('PATCH', '/proxies').json()
-
-    class Tagging(object):
-        def __init__(self, client):
-            self.client = client
-
-        @api(2)
-        def get(self):
-            """GET /tagging"""
-            return self.client.request('GET', '/tagging').json()
-
-        @api(2)
-        def patch(self):
-            """PATCH /tagging"""
-            return self.client.request('PATCH', '/tagging').json()
+    def regen_token(self):
+        """Regenerate the API v2 token."""
+        raise NotImplementedError()
