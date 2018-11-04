@@ -1,0 +1,88 @@
+openapi: 3.0.0
+info:
+  title: Vectra API
+  description: Swagger spec for Vectra API v1
+  version: v1
+  license:
+    name: MIT
+  contact:
+    name: Vectra Support
+    url: https://support.vectranetworks.com
+    email: support@vectra.ai
+servers:
+  - url: 'https://{host}/api'
+    variables:
+      host:
+        description: Hostname or IP of Brain
+        default: localhost
+security:
+  - BasicAuth: []
+paths:
+  /detections:
+    get:
+      summary: Detection objects contain all the information related to security events detected on the network.
+      operationId: get_detections
+      tags:
+        - detections
+      parameters:
+        - name: page
+          in: query
+          description: Page Number.
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detections'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Detections:
+      type: object
+      properties:
+        count:
+          description: Number of returned objects
+          type: integer
+        next:
+          description: URL for next page
+          type: string
+        previous:
+          description: URL for previous page
+          type: string
+        results:
+          description: The list of detections
+          type: array
+          items:
+            $ref: '#/components/schemas/Detection'
+      required:
+        - count
+        - results
+    Detection:
+      type: object
+      properties:
+        id:
+          type: integer
