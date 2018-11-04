@@ -22,7 +22,8 @@ def v1(host, username, password, verify=True):
     client = detect_v1.ApiClient(config)
 
     api = detect_v1.DefaultApi(client)
-    api.session = s
+    attach_session_to(s, api)
+
     return api
 
 
@@ -40,9 +41,21 @@ def v2(host, token, verify=True):
     client = detect_v2.ApiClient(config)
 
     api = detect_v2.DefaultApi(client)
-    api.session = s
+    attach_session_to(s, api)
 
     return api
+
+
+def attach_session_to(session, attach_to):
+    s = session
+    attach_to.session = s
+    attach_to.get = s.get
+    attach_to.head = s.get
+    attach_to.post = s.post
+    attach_to.put = s.put
+    attach_to.delete = s.delete
+    attach_to.patch = s.patch
+    attach_to.options = s.options
 
 
 def PrefixUrlSession(prefix):
