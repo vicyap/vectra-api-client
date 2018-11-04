@@ -20,8 +20,6 @@ security:
 paths:
   /detections:
     get:
-      tags:
-        - detections
       summary: Detection objects contain all the information related to security events detected on the network.
       parameters:
         - name: fields
