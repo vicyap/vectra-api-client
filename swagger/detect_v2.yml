@@ -10,30 +10,37 @@ info:
     url: https://support.vectranetworks.com
     email: support@vectra.ai
 servers:
-  - url: 'https://{host}/api/v2'
-    variables:
-      host:
-        description: Hostname or IP of Brain
-        default: localhost
+- url: https://{host}/api/v2
+  variables:
+    host:
+      description: Hostname or IP of Brain
+      default: localhost
 security:
-  - TokenAuth: []
+- TokenAuth: []
 paths:
   /detections:
     get:
       summary: Detection objects contain all the information related to security events detected on the network.
-      operationId: get_detections
-      tags:
-        - detections
       parameters:
-        - name: page
-          in: query
-          description: Page Number.
-          required: false
-          schema:
-            type: integer
-            format: int32
+      - name: category
+        in: query
+        description: The category of the vname attack detected.
+        schema:
+            type: string
+            enum:
+            - COMMAND AND CONTROL
+            - BOTNET
+            - RECONNAISSANCE
+            - LATERAL MOVEMENT
+            - EXFILTRATION
+      - name: page
+        in: query
+        description: Page Number.
+        schema:
+          type: integer
+          format: int32
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -44,7 +51,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     TokenAuth:
@@ -54,8 +61,8 @@ components:
   schemas:
     Error:
       required:
-        - code
-        - message
+      - code
+      - message
       properties:
         code:
           type: integer
@@ -78,12 +85,25 @@ components:
           description: The list of detections
           type: array
           items:
-            $ref: '#/components/schemas/Detection'
+            $ref: "#/components/schemas/Detection"
       required:
-        - count
-        - results
+      - count
+      - results
     Detection:
       type: object
       properties:
         id:
           type: integer
+        detection_type:
+          description: Name of the detection as shown by in UI.
+          type: string
+        summary:
+          type: object
+          description: Summary of detection.
+  responses:
+    DetectionsResponse200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Detections"
