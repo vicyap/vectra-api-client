@@ -20,34 +20,271 @@ security:
 paths:
   /detections:
     get:
+      tags:
+        - detections
       summary: Detection objects contain all the information related to security events detected on the network.
-      operationId: get_detections
       parameters:
+        - name: fields
+          in: query
+          description: Filter objects listed
+          schema:
+            type: array
+            items:
+              type: string
         - name: page
           in: query
           description: Page Number.
-          required: false
           schema:
             type: integer
-            format: int32
+        - name: page_size
+          in: query
+          description: Page size.
+          schema:
+            type: integer
+        - name: ordering
+          in: query
+          description: Orders records by last timestamp, threat score and certainty score.
+          schema:
+            type: string
+            enum:
+              - c_score
+              - -c_score
+              - last_timestamp
+              - -last_timestamp
+              - t_score
+              - -t_score
+        - name: min_id
+          in: query
+          description: '>= the id provided.'
+          schema:
+            type: integer
+        - name: max_id
+          in: query
+          description: '<= the id provided.'
+          schema:
+            type: integer
+        - name: state
+          in: query
+          description: filter by state.
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+        - name: category
+          in: query
+          description: filter by the detection category.
+          schema:
+            type: string
+            enum:
+              - botnet
+              - command
+              - exfiltration
+              - lateral
+              - reconnaissance
+        - name: detection_type
+          in: query
+          description: filter by the name of the threat detected.
+          schema:
+            type: string
+        - name: src_ip
+          in: query
+          description: filter by source ip address.
+          schema:
+            type: string
+        - name: threat_score
+          in: query
+          description: filter by threat score.
+          schema:
+            type: integer
+        - name: threat_gte  # double check vs t_score_gte
+          in: query
+          description: 'filter by threat score >= the score provided.'
+          schema:
+            type: integer
+        - name: certainty
+          in: query
+          description: filter by certainty score.
+          schema:
+            type: integer
+        - name: certainty_gte
+          in: query
+          description: 'filter by certainty score >= the score provided.'
+          schema:
+            type: integer
+        - name: last_timestamp
+          in: query
+          description: filter by last timestamp.
+          schema:
+            type: string
+        - name: host_id
+          in: query
+          description: filter by id of the host.
+          schema:
+            type: integer
+        - name: tags
+          in: query
+          description: filter by a tag or a comma-separated list of tags.
+          schema:
+            type: string
+        - name: destination
+          in: query
+          description: filter by destination in the the detection detail set.
+          schema:
+            type: string
+        - name: proto
+          in: query
+          description: filter by the protocol in the detection detail set.
+          schema:
+            type: string
+        - name: is_targeting_key_asset
+          in: query
+          description: filter by is_targeting_key_asset.
+          schema:
+            type: boolean
+        - name: note_modified_timestamp_gte
+          in: query
+          description: 'filter by note_modified_timestamp >= the timestamp provided.'
+          schema:
+            type: string
+        # The following query parameters have been deprecated
+        - name: type_vname
+          in: query
+          description: filter by the detection type (verbose name).
+          deprecated: true
+          schema:
+            type: string
+        - name: dst_port
+          in: query
+          description: filter by the destination porter in the detection detail set.
+          deprecated: true
+          schema:
+            type: integer
+        - name: inbound_ip
+          in: query
+          description: filter by the inbound_ip in the relayed comm set.
+          deprecated: true
+          schema:
+            type: string
+        - name: inbound_proto
+          in: query
+          description: filter by the inbound_proto in the relayed comm set.
+          deprecated: true
+          schema:
+            type: string
+        - name: inbound_port
+          in: query
+          description: filter by inbound_port in the relayed comm set.
+          deprecated: true
+          schema:
+            type: integer
+        - name: inbound_dns
+          in: query
+          description: filter by inbound_dns in the relayed comm set.
+          deprecated: true
+          schema:
+            type: string
+        - name: outbound_ip
+          in: query
+          description: filter by the outbound_ip in the relayed comm set.
+          deprecated: true
+          schema:
+            type: string
+        - name: outbound_port
+          in: query
+          description: filter by the outbound_port in the relayed comm set.
+          deprecated: true
+          schema:
+            type: integer
+        - name: outbound_dns
+          in: query
+          description: filter by the outbound_dns in teh relayed comm set.
+          deprecated: true
+          schema:
+            type: string
+        - name: dns_ip
+          in: query
+          description: filter by the dns_ip in the dns_set.
+          deprecated: true
+          schema:
+            type: string
+        - name: dns_request
+          in: query
+          description: filter by the dns_request in the dns_set.
+          deprecated: true
+          schema:
+            type: string
+        - name: resp_code
+          in: query
+          description: filter by the resp_code in the dns_set.
+          deprecated: true
+          schema:
+            type: integer
+        - name: resp
+          in: query
+          description: filter by the resp in the dns_set.
+          deprecated: true
+          schema:
+            type: string
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Detections'
+          $ref: '#/components/responses/DetectionsResponse200'
         default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+          $ref: '#/components/responses/DefaultResponse'
+  /detections/{id}:
+    get:
+      tags:
+        - detections
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/DetectionResponse200'
+        default:
+          $ref: '#/components/responses/DefaultResponse'
+  /system/info:
+    get:
+      tags:
+        - system
+      responses:
+        '200':
+          $ref: '#/components/responses/SystemInfoResponse200'
+        default:
+          $ref: '#/components/responses/DefaultResponse'
 components:
   securitySchemes:
     BasicAuth:
       type: http
       scheme: basic
+  responses:
+    DefaultResponse:
+      description: unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    DetectionsResponse200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Detections'
+    DetectionResponse200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Detection'
+    SystemInfoResponse200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SystemInfo'
   schemas:
     Error:
       required:
@@ -56,23 +293,22 @@ components:
       properties:
         code:
           type: integer
-          format: int32
         message:
           type: string
     Detections:
       type: object
       properties:
         count:
-          description: Number of returned objects
+          description: Number of returned objects.
           type: integer
         next:
-          description: URL for next page
+          description: URL for next page.
           type: string
         previous:
-          description: URL for previous page
+          description: URL for previous page.
           type: string
         results:
-          description: The list of detections
+          description: The list of detections.
           type: array
           items:
             $ref: '#/components/schemas/Detection'
@@ -82,5 +318,130 @@ components:
     Detection:
       type: object
       properties:
+        c_score:
+          type: integer
+          description: The certainty score attributed to the detection.
+          deprecated: false
+        category:
+          type: string
+          description: The category of the vname attack detected.
+        description:
+          type: string
+          nullable: true
+        detection_detail_set:
+          type: array
+          items:
+            $ref: '#/components/schemas/DetectionDetails'
+          description: Indicates the number of nested records.
+          deprecated: true
+        dns_set:
+          type: array
+          items:
+            type: string
+          deprecated: true
+        first_timestamp:
+          type: string
+          description: The timestamp when the event was first detected.
+        host:
+          type: string
+          description: The URL that links directly to the host record.
         id:
           type: integer
+          description: Object ID.
+        last_timestamp:
+          type: string
+          description: The timestamp when the event was last detected.
+        relayed_comm_set:
+          type: array
+          items:
+            type: string
+          deprecated: false
+        sensor_luid:
+          type: string
+          description: The sensor local unique ID where this flow was detected from.
+        src_ip:
+          type: string
+          description: The source IP address of the host attributed to the security event.
+        state:
+          type: string
+          description: The state of the detection.
+          enum:
+            - inactive
+            - active
+        summary:
+          type: object
+          nullable: true
+        t_score:
+          type: integer
+          description: The threat score attributed to the detection.
+        tags:
+          type: array
+          items:
+            type: string
+        targets_key_asset:
+          type: boolean
+        triage_rule_id:
+          type: string
+          nullable: true
+        type_vname:
+          type: string
+          description: The name of the threat detected.
+          deprecated: true
+        url:
+          type: string
+          description: The URL that links directly to the detection record.
+    DetectionDetails:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Detection detail count.
+          nullable: true
+        description:
+          type: string
+          description: System generated description of the event.
+        dst_dns:
+          type: string
+          nullable: true
+        dst_geo:
+          type: string
+          nullable: true
+        dst_host_id:
+          type: integer
+        dst_ip:
+          type: string
+        dst_port:
+          type: integer
+        first_timestamp:
+          type: string
+          description: The timestamp when the event was first detected.
+        id:
+          type: integer
+        last_timestamp:
+          type: string
+          description: The timestamp when the event was last detected.
+        proto:
+          type: string
+          description: Protocol used in the communications.
+        total_bytes_sent:
+          type: integer
+          description: Total bytes sent by the client.
+        total_bytes_rcvd:
+          type: integer
+          description: Total bytes received by the client.
+        url:
+          type: string
+          description: The URL that links directory to this record.
+    SystemInfo:
+      type: object
+      properties:
+        colossus_mode:
+          type: string
+        platform_version:
+          type: string
+        serial_number:
+          type: string
+        ui_version:
+          type: string
+        version:
+          type: string
