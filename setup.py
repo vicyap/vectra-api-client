@@ -40,7 +40,7 @@ setup(
     include_package_data=True,
     keywords='vectra_api_client',
     name='vectra_api_client',
-    packages=find_packages(include=['vectra_api_client']),
+    packages=find_packages(),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,

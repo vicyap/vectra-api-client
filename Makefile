@@ -29,7 +29,7 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-swagger ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -50,20 +50,23 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
+clean-swagger:
+	rm -rf detect_v1
+	rm -rf detect_v2
+
 lint: ## check style with flake8
 	flake8 vectra_api_client tests
 
-test: ## run tests quickly with the default Python
-	py.test
+test: swagger ## run tests quickly with the default Python
+	pytest
 
-test-all: ## run tests on every Python version with tox
+test-all: swagger ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source vectra_api_client -m pytest
 	coverage report -m
 	coverage html
-	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/vectra_api_client.rst
@@ -71,7 +74,6 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	sphinx-apidoc -o docs/ vectra_api_client
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
@@ -79,10 +81,43 @@ servedocs: docs ## compile the docs watching for changes
 release: dist ## package and upload a release
 	twine upload dist/*
 
-dist: clean ## builds source and wheel package
+dist: clean swagger ## builds source and wheel package
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean ## install the package to the active Python's site-packages
+install: clean swagger ## install the package to the active Python's site-packages
 	python setup.py install
+
+USERNAME=$(shell id --user --name)
+UID=$(shell id --user $(USERNAME))
+GID=$(shell id --group $(USERNAME))
+
+CONFIG_DIR=swagger/config
+OUTPUT_DIR=.
+
+.PHONY: swagger
+swagger:
+	docker build \
+		--build-arg USERNAME=$(USERNAME) \
+		--build-arg UID=$(UID) \
+		--build-arg GID=$(GID) \
+		-t vectra-api-client/openapi-generator-cli \
+		. \
+		2>&1 >/dev/null
+	docker run \
+		-v $(PWD):/local \
+		vectra-api-client/openapi-generator-cli generate \
+		--config /local/$(CONFIG_DIR)/detect_v1.json \
+		--input-spec /local/swagger/detect_v1.yml \
+		--generator-name python \
+		--output /local/$(OUTPUT_DIR)
+	docker run \
+		-v $(PWD):/local \
+		vectra-api-client/openapi-generator-cli generate \
+		--config /local/$(CONFIG_DIR)/detect_v2.json \
+		--input-spec /local/swagger/detect_v2.yml \
+		--generator-name python \
+		--output /local/$(OUTPUT_DIR)
+	rm -rf $(OUTPUT_DIR)/test
+	rm -rf $(OUTPUT_DIR)/.openapi-generator
