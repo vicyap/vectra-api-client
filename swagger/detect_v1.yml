@@ -22,8 +22,6 @@ paths:
     get:
       summary: Detection objects contain all the information related to security events detected on the network.
       operationId: get_detections
-      tags:
-        - detections
       parameters:
         - name: page
           in: query
