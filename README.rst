@@ -3,11 +3,11 @@ Vectra API Client
 =================
 
 
-.. image:: https://img.shields.io/pypi/v/vectra_api_client.svg
-        :target: https://pypi.python.org/pypi/vectra_api_client
+.. image:: https://img.shields.io/pypi/v/vectra-api-client.svg
+        :target: https://pypi.python.org/pypi/vectra-api-client
 
-.. image:: https://img.shields.io/travis/vicyap/vectra_api_client.svg
-        :target: https://travis-ci.org/vicyap/vectra_api_client
+.. image:: https://img.shields.io/travis/vicyap/vectra-api-client.svg
+        :target: https://travis-ci.org/vicyap/vectra-api-client
 
 .. image:: https://readthedocs.org/projects/vectra-api-client/badge/?version=latest
         :target: https://vectra-api-client.readthedocs.io/en/latest/?badge=latest
