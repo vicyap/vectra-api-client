@@ -94,10 +94,10 @@ UID=$(shell id --user $(USERNAME))
 GID=$(shell id --group $(USERNAME))
 
 CONFIG_DIR=swagger/config
-OUTPUT_DIR=.
+OUTPUT_DIR?=.
+GENERATOR_NAME?=python
 
-.PHONY: swagger
-swagger:
+docker-build:
 	docker build \
 		--build-arg USERNAME=$(USERNAME) \
 		--build-arg UID=$(UID) \
@@ -105,19 +105,22 @@ swagger:
 		-t vectra-api-client/openapi-generator-cli \
 		. \
 		2>&1 >/dev/null
+
+.PHONY: swagger
+swagger: docker-build
 	docker run \
 		-v $(PWD):/local \
 		vectra-api-client/openapi-generator-cli generate \
 		--config /local/$(CONFIG_DIR)/detect_v1.json \
 		--input-spec /local/swagger/detect_v1.yml \
-		--generator-name python \
+		--generator-name $(GENERATOR_NAME) \
 		--output /local/$(OUTPUT_DIR)
 	docker run \
 		-v $(PWD):/local \
 		vectra-api-client/openapi-generator-cli generate \
 		--config /local/$(CONFIG_DIR)/detect_v2.json \
 		--input-spec /local/swagger/detect_v2.yml \
-		--generator-name python \
+		--generator-name $(GENERATOR_NAME) \
 		--output /local/$(OUTPUT_DIR)
 	rm -rf $(OUTPUT_DIR)/test
 	rm -rf $(OUTPUT_DIR)/.openapi-generator
