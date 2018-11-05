@@ -37,86 +37,73 @@ generate. I hope this helps helps increase accessibility and ease of use.
 Usage
 -----
 
-**Get Detections (v1)**
-```
-from vectra_api_client import apis
-username = 'vectra'
-password = 'password'
-host = 'https://vectra-ip-or-hostname.com'
-api = apis.v1(host, username, password)
-query_params = {
-    'type_vname': 'data smuggler',
-    'src_ip': '172.16.106.116',
-}
-detections = api.detections_get(**query_params)
+**Get Detections (v1)**::
 
-```
+    from vectra_api_client import apis
+    username = 'vectra'
+    password = 'password'
+    host = 'https://vectra-ip-or-hostname.com'
+    api = apis.v1(host, username, password)
+    query_params = {
+        'type_vname': 'data smuggler',
+        'src_ip': '172.16.106.116',
+    }
+    detections = api.detections_get(**query_params)
 
-**Get Detections (v2)**
-```
-from vectra_api_client import apis
-token = 'TokenFromProfilePage'
-host = 'https://vectra-ip-or-hostname.com'
-api = apis.v2(host, token)
-query_params = {
-    'src_ip': '172.16.106.116',
-    'threat_gte': 50,
-}
-detections = api.detections_get(**query_params)
+**Get Detections (v2)**::
 
-```
+    from vectra_api_client import apis
+    token = 'TokenFromProfilePage'
+    host = 'https://vectra-ip-or-hostname.com'
+    api = apis.v2(host, token)
+    query_params = {
+        'src_ip': '172.16.106.116',
+        'threat_gte': 50,
+    }
+    detections = api.detections_get(**query_params)
 
-**Get Hosts (v1)**
-```
-from vectra_api_client import apis
-username = 'vectra'
-password = 'password'
-host = 'https://vectra-ip-or-hostname.com'
-api = apis.v1(host, username, password)
-query_params = {
-    'state': 'active',
-    'name': 'tb5-7',
-}
-api.hosts_get(**query_params)
+**Get Hosts (v1)**::
 
-```
+    from vectra_api_client import apis
+    username = 'vectra'
+    password = 'password'
+    host = 'https://vectra-ip-or-hostname.com'
+    api = apis.v1(host, username, password)
+    query_params = {
+        'state': 'active',
+        'name': 'tb5-7',
+    }
+    api.hosts_get(**query_params)
 
-**Get Hosts (v2)**
-```
-from vectra_api_client import apis
-token = 'TokenFromProfilePage'
-host = 'https://vectra-ip-or-hostname.com'
-api = apis.v2(host, username, password)
-query_params = {
-    'state': 'active',
-    'name': 'tb5-7',
-}
-api.hosts_get(**query_params)
+**Get Hosts (v2)**::
 
+    from vectra_api_client import apis
+    token = 'TokenFromProfilePage'
+    host = 'https://vectra-ip-or-hostname.com'
+    api = apis.v2(host, username, password)
+    query_params = {
+        'state': 'active',
+        'name': 'tb5-7',
+    }
+    api.hosts_get(**query_params)
 
-```
+**Search (v2)**::
 
-**Search (v2)**
-```
-from vectra_api_client import apis
-token = 'TokenFromProfilePage'
-host = 'https://vectra-ip-or-hostname.com'
-api = apis.v2(host, username, password)
-query_string = 'host.threat:>=50 and host.certainty:>=50'
-hosts = api.search_hosts_get(query_string=query_string)
+    from vectra_api_client import apis
+    token = 'TokenFromProfilePage'
+    host = 'https://vectra-ip-or-hostname.com'
+    api = apis.v2(host, username, password)
+    query_string = 'host.threat:>=50 and host.certainty:>=50'
+    hosts = api.search_hosts_get(query_string=query_string)
 
-```
+**System Info (v1)**::
 
-**System Info (v1)**
-```
-from vectra_api_client import apis
-username = 'vectra'
-password = 'password'
-host = 'https://vectra-ip-or-hostname.com'
-api = apis.v1(host, username, password)
-system_info = api.system_info_get()
-
-```
+    from vectra_api_client import apis
+    username = 'vectra'
+    password = 'password'
+    host = 'https://vectra-ip-or-hostname.com'
+    api = apis.v1(host, username, password)
+    system_info = api.system_info_get()
 
 **Other Endpoints**
 
@@ -125,35 +112,36 @@ that allow you to hit any endpoint under their respective base url api routes.
 (eg. v1 will use /api as the base url and v2 will use /api/v2 as the base url.)
 This `.session` attribute is from http://docs.python-requests.org/en/master/user/advanced/#session-objects
 
-```
-# v1
-from vectra_api_client import apis
-username = 'vectra'
-password = 'password'
-host = 'https://vectra-ip-or-hostname.com'
-api = apis.v1(host, username, password)
-api.session.get('endpoint/under/development')  # GET {host}/api/endpoint/under/development
-api.session.post('endpoint/under/development')  # POST {host}/api/endpoint/under/development
+v1::
 
-# v2
-from vectra_api_client import apis
-token = 'TokenFromProfilePage'
-host = 'https://vectra-ip-or-hostname.com'
-api = apis.v1(host, username, password)
-api.session.get('endpoint/under/development')  # GET {host}/api/v2/endpoint/under/development
-api.session.post('endpoint/under/development')  # POST {host}/api/v2/endpoint/under/development
+    from vectra_api_client import apis
+    username = 'vectra'
+    password = 'password'
+    host = 'https://vectra-ip-or-hostname.com'
+    api = apis.v1(host, username, password)
+    api.session.get('endpoint/under/development')  # GET {host}/api/endpoint/under/development
+    api.session.post('endpoint/under/development')  # POST {host}/api/endpoint/under/development
 
-```
+
+v2::
+    
+    from vectra_api_client import apis
+    token = 'TokenFromProfilePage'
+    host = 'https://vectra-ip-or-hostname.com'
+    api = apis.v1(host, username, password)
+    api.session.get('endpoint/under/development')  # GET {host}/api/v2/endpoint/under/development
+    api.session.post('endpoint/under/development')  # POST {host}/api/v2/endpoint/under/development
+    
 
 Installation
 ------------
 
-* (python) `pip install vectra-api-client`
+``pip install vectra-api-client``
 
 Other Languages
 ~~~~~~~~~~~~~~~
 
-`GENERATOR_NAME=$lang OUTPUT_DIR=output make swagger`
+``GENERATOR_NAME=$lang OUTPUT_DIR=output make swagger``
 
 
 Contributing
@@ -167,14 +155,13 @@ Developing
 
 * docker is required. It is used to run openapi/openapi-generator-cli
 
-```
-pip install -r requirements.txt
-pip install -r requirements_dev.txt
-make swagger
-make test
-make test-all
-
-```
+::
+    pip install -r requirements.txt
+    pip install -r requirements_dev.txt
+    make swagger
+    make test
+    make test-all
+    
 
 TODO
 ----
@@ -182,25 +169,25 @@ TODO
 API v1
 ~~~~~~
 
-[] /settings
-[] /rules
-[x] /detections
-[x] /hosts
-[] /health
-[] /sensors
-[x] /system/info
+* [] /settings
+* [] /rules
+* [x] /detections
+* [x] /hosts
+* [] /health
+* [] /sensors
+* [x] /system/info
 
 
 API v2
 ~~~~~~
 
-[] /rules
-[x] /detections
-[] /hosts
-[x] /search
-[x] /threatFeeds
-[x] /proxies
-[] /tagging
+* [] /rules
+* [x] /detections
+* [] /hosts
+* [x] /search
+* [x] /threatFeeds
+* [x] /proxies
+* [] /tagging
 
 
 This project uses https://swagger.io/ in order to generate its low-level http api classes.
