@@ -156,6 +156,7 @@ Developing
 * docker is required. It is used to run openapi/openapi-generator-cli
 
 ::
+
     pip install -r requirements.txt
     pip install -r requirements_dev.txt
     make swagger
@@ -200,9 +201,9 @@ Resources
 Credits
 -------
 
+Thanks to Moosh for his early contributions.
+
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-
-Thanks to Moosh for his early contributions.
