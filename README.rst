@@ -34,6 +34,117 @@ Since this project uses swagger, a client library in any language should be poss
 generate. I hope this helps helps increase accessibility and ease of use.
 
 
+Usage
+-----
+
+**Get Detections (v1)**
+```
+from vectra_api_client import apis
+username = 'vectra'
+password = 'password'
+host = 'https://vectra-ip-or-hostname.com'
+api = apis.v1(host, username, password)
+query_params = {
+    'type_vname': 'data smuggler',
+    'src_ip': '172.16.106.116',
+}
+detections = api.detections_get(**query_params)
+
+```
+
+**Get Detections (v2)**
+```
+from vectra_api_client import apis
+token = 'TokenFromProfilePage'
+host = 'https://vectra-ip-or-hostname.com'
+api = apis.v2(host, token)
+query_params = {
+    'src_ip': '172.16.106.116',
+    'threat_gte': 50,
+}
+detections = api.detections_get(**query_params)
+
+```
+
+**Get Hosts (v1)**
+```
+from vectra_api_client import apis
+username = 'vectra'
+password = 'password'
+host = 'https://vectra-ip-or-hostname.com'
+api = apis.v1(host, username, password)
+query_params = {
+    'state': 'active',
+    'name': 'tb5-7',
+}
+api.hosts_get(**query_params)
+
+```
+
+**Get Hosts (v2)**
+```
+from vectra_api_client import apis
+token = 'TokenFromProfilePage'
+host = 'https://vectra-ip-or-hostname.com'
+api = apis.v2(host, username, password)
+query_params = {
+    'state': 'active',
+    'name': 'tb5-7',
+}
+api.hosts_get(**query_params)
+
+
+```
+
+**Search (v2)**
+```
+from vectra_api_client import apis
+token = 'TokenFromProfilePage'
+host = 'https://vectra-ip-or-hostname.com'
+api = apis.v2(host, username, password)
+query_string = 'host.threat:>=50 and host.certainty:>=50'
+hosts = api.search_hosts_get(query_string=query_string)
+
+```
+
+**System Info (v1)**
+```
+from vectra_api_client import apis
+username = 'vectra'
+password = 'password'
+host = 'https://vectra-ip-or-hostname.com'
+api = apis.v1(host, username, password)
+system_info = api.system_info_get()
+
+```
+
+**Other Endpoints**
+
+The api objects returned from `apis.(v1|v2)` have a `.session` attribute
+that allow you to hit any endpoint under their respective base url api routes.
+(eg. v1 will use /api as the base url and v2 will use /api/v2 as the base url.)
+This `.session` attribute is from http://docs.python-requests.org/en/master/user/advanced/#session-objects
+
+```
+# v1
+from vectra_api_client import apis
+username = 'vectra'
+password = 'password'
+host = 'https://vectra-ip-or-hostname.com'
+api = apis.v1(host, username, password)
+api.session.get('endpoint/under/development')  # GET {host}/api/endpoint/under/development
+api.session.post('endpoint/under/development')  # POST {host}/api/endpoint/under/development
+
+# v2
+from vectra_api_client import apis
+token = 'TokenFromProfilePage'
+host = 'https://vectra-ip-or-hostname.com'
+api = apis.v1(host, username, password)
+api.session.get('endpoint/under/development')  # GET {host}/api/v2/endpoint/under/development
+api.session.post('endpoint/under/development')  # POST {host}/api/v2/endpoint/under/development
+
+```
+
 Installation
 ------------
 
