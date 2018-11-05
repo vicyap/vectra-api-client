@@ -1,5 +1,5 @@
 =================
-Vectra API Client
+Vectra API Client (Under Development)
 =================
 
 
@@ -201,7 +201,7 @@ Resources
 Credits
 -------
 
-Thanks to Moosh for his early contributions.
+Thanks to @leroux for his early contributions.
 
 This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
 
