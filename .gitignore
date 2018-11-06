@@ -1,5 +1,5 @@
-detect_v1/**
-detect_v2/**
+python_vectra_cognito_detect_v1/**
+python_vectra_cognito_detect_v2/**
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

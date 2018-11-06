@@ -51,29 +51,32 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 clean-swagger:
-	rm -rf detect_v1
-	rm -rf detect_v2
+	rm -rf python_vectra_cognito_detect_v1
+	rm -rf python_vectra_cognito_detect_v2
 
 lint: ## check style with flake8
 	flake8 vectra_api_client tests
 
 test: swagger ## run tests quickly with the default Python
-	pytest
+	pytest --doctest-modules
 
 test-all: swagger ## run tests on every Python version with tox
 	tox
 
-coverage: ## check code coverage quickly with the default Python
+coverage: swagger ## check code coverage quickly with the default Python
 	coverage run --source vectra_api_client -m pytest
 	coverage report -m
 	coverage html
 
-docs: ## generate Sphinx HTML documentation, including API docs
+docs: swagger ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/vectra_api_client.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ vectra_api_client
+	sphinx-apidoc -o docs/ python_vectra_cognito_detect_v1
+	sphinx-apidoc -o docs/ python_vectra_cognito_detect_v2
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
+	$(BROWSER) docs/_build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
@@ -102,25 +105,15 @@ docker-build:
 		--build-arg USERNAME=$(USERNAME) \
 		--build-arg UID=$(UID) \
 		--build-arg GID=$(GID) \
-		-t vectra-api-client/openapi-generator-cli \
+		-t openapi-generator-cli \
+		-f docker/Dockerfile \
 		. \
 		2>&1 >/dev/null
 
+
 .PHONY: swagger
-swagger: docker-build
-	docker run \
-		-v $(PWD):/local \
-		vectra-api-client/openapi-generator-cli generate \
-		--config /local/$(CONFIG_DIR)/detect_v1.json \
-		--input-spec /local/swagger/detect_v1.yml \
-		--generator-name $(GENERATOR_NAME) \
-		--output /local/$(OUTPUT_DIR)
-	docker run \
-		-v $(PWD):/local \
-		vectra-api-client/openapi-generator-cli generate \
-		--config /local/$(CONFIG_DIR)/detect_v2.json \
-		--input-spec /local/swagger/detect_v2.yml \
-		--generator-name $(GENERATOR_NAME) \
-		--output /local/$(OUTPUT_DIR)
-	rm -rf $(OUTPUT_DIR)/test
-	rm -rf $(OUTPUT_DIR)/.openapi-generator
+swagger: docker-build clean-swagger
+	SWAG_DIR=swagger/cognito/detect/v1 GENERATOR_NAME=python ./scripts/run_swagger.sh
+	SWAG_DIR=swagger/cognito/detect/v2 GENERATOR_NAME=python ./scripts/run_swagger.sh
+	rm -rf .openapi-generator
+	rm -rf test
