@@ -40,7 +40,7 @@ Usage
 Detect v2
 ~~~~~~~~~
 
-**Get Detections (v2)**::
+**Get Detections (v2)**:: python
 
     >>> from vectra_api_client import clients
     >>> token = 'TokenFromProfilePage'
@@ -52,7 +52,7 @@ Detect v2
     ... }
     >>> detections = client.detections_get(**query_params)
 
-**Get Hosts (v2)**::
+**Get Hosts (v2)**:: python
 
     >>> from vectra_api_client import clients
     >>> token = 'TokenFromProfilePage'
@@ -64,7 +64,7 @@ Detect v2
     ... }
     >>> client.hosts_get(**query_params)
 
-**Search (v2)**::
+**Search (v2)**:: python
 
     >>> from vectra_api_client import clients
     >>> token = 'TokenFromProfilePage'
@@ -76,7 +76,7 @@ Detect v2
 Detect v1
 ~~~~~~~~~
 
-**Get Detections (v1)**::
+**Get Detections (v1)**:: python
 
     >>> from vectra_api_client import clients
     >>> username = 'vectra'
@@ -89,7 +89,7 @@ Detect v1
     ... }
     >>> detections = client.detections_get(**query_params)
 
-**Get Hosts (v1)**::
+**Get Hosts (v1)**:: python
 
     >>> from vectra_api_client import clients
     >>> username = 'vectra'
@@ -102,7 +102,7 @@ Detect v1
     ... }
     >>> client.hosts_get(**query_params)
 
-**System Info (v1)**::
+**System Info (v1)**:: python
 
     >>> from vectra_api_client import clients
     >>> username = 'vectra'
@@ -119,7 +119,7 @@ that allow you to hit any endpoint under their respective base url api routes.
 (eg. v1 will use /api as the base url and v2 will use /api/v2 as the base url.)
 This `.session` attribute is from http://docs.python-requests.org/en/master/user/advanced/#session-objects
 
-v1::
+v1:: python
 
     >>> from vectra_api_client import clients
     >>> username = 'vectra'
@@ -130,7 +130,7 @@ v1::
     >>> client.session.post('endpoint/under/development')  # POST {host}/api/endpoint/under/development
 
 
-v2::
+v2:: python
     
     >>> from vectra_api_client import clients
     >>> token = 'TokenFromProfilePage'
